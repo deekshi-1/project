@@ -165,7 +165,7 @@ const resetPassword = asyncHandler(async (req, res) => {
   user.resetToken = undefined;
   user.resetExpires = undefined;
   await user.save();
-  res.json(user);  
+  res.json(user);
 });
 
 // UPDATE USER
