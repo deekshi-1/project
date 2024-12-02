@@ -1,4 +1,8 @@
 const User = require("../models/userModel");
+const Product = require("../models/prodectModel");
+const Cart = require("../models/cartModel");
+const Order = require("../models/orderModel");
+const uniqid = require("uniqid");
 const asyncHandler = require("express-async-handler");
 const generateToken = require("../config/jwtToken");
 const generateRefreshToken = require("../config/jwtRefresh");
@@ -168,6 +172,142 @@ const resetPassword = asyncHandler(async (req, res) => {
   res.json(user);
 });
 
+//WISHLIST AND ADDRESS
+
+const getWishList = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  try {
+    const findUser = await User.findById(_id).populate("wishlist");
+    res.json(findUser);
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+
+const addAddress = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  try {
+    const updateAddress = await User.findByIdAndUpdate(
+      _id,
+      {
+        $push: { adre: prodId },
+      },
+      {
+        new: true,
+      }
+    );
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+
+//CART
+const userCart = asyncHandler(async (req, res) => {
+  const { cart } = req.body;
+  const { _id } = req.user;
+  try {
+    let products = [];
+    const user = await User.findById(_id);
+    const cartExist = await Cart.findOne({ orderby: user._id });
+    if (cartExist) {
+      cartExist.remove();
+    }
+    for (let i = 0; i < cart.length; i++) {
+      let obj = {};
+      obj.product = cart[i]._id;
+      obj.count = cart[i].count;
+      obj.color = cart[i].color;
+      let getPrice = await Product.findById(cart[i]._id).select("Price").exec();
+      obj.price = getPrice;
+      products.push(obj);
+    }
+    let cartTotal = 0;
+    for (let i = 0; i < products.length; i++) {
+      cartTotal = cartTotal + products[i].price * products[i].count;
+    }
+    let newCart = await new Cart({
+      products,
+      cartTotal,
+      orderby: user?._id,
+    }).save();
+    res.json(newCart);
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+
+const getUserCart = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  try {
+    const cart = await Cart.findOne({ orderby: _id }).populate(
+      "products.product"
+    );
+    res.json(cart);
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+const emptyCart = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  try {
+    const user = await User.findOne({ _id });
+    const cart = await Cart.findOneAndRemove({ orderby: user._id });
+    res.json(cart);
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+
+const createOrder = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { COD } = req.body;
+  try {
+    if (!COD) throw new Error("Cash on delivery failed");
+    const user = await User.findById(_id);
+    let userCart = await Cart.findOne({ orderby: user._id });
+    let total = userCart.total;
+    let newOrder = await new Order({
+      products: userCart.products,
+      paymentIntent: {
+        id: uniqid(),
+        method: "COD",
+        amount: total,
+        status: "Cash on delivery",
+        created: Date.now(),
+        currency: "inr",
+      },
+      orderby: user._id,
+      orderStatus: "Cash On Delivery",
+    }).save();
+    let update = userCart.products.map((item) => {
+      return {
+        updateOne: {
+          filter: { _id: item.product._id },
+          update: { $inc: { quantity: -item.count, sold: +item.count } },
+        },
+      };
+    });
+    const updated = await Product.bulkWrite(update, {});
+
+    res.json({ message: success });
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+
+const getOrders = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  try {
+    const userorder = await Order.findOne({ orderby: _id })
+      .populate("products.product")
+      .exec();
+    res.json(userorder);
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+
+
 // UPDATE USER
 const updateUser = asyncHandler(async (req, res) => {});
 
@@ -180,4 +320,11 @@ module.exports = {
   updatePassword,
   forgotPassword,
   resetPassword,
+  getWishList,
+  addAddress,
+  userCart,
+  getUserCart,
+  emptyCart,
+  createOrder,
+  getOrders,
 };

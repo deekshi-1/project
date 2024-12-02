@@ -36,14 +36,19 @@ const ProductSchema = new Schema(
     images: {
       type: Array,
     },
-    rating: [
+    ratings: [
       {
         star: Number,
+        review: String,
         postedBy: { type: Schema.Types.ObjectId, ref: "User" },
       },
     ],
+    totalrating: {
+      type: String,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Product",ProductSchema);
+module.exports = mongoose.model("Product", ProductSchema);
