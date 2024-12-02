@@ -4,7 +4,8 @@ const generateToken = require("../config/jwtToken");
 const generateRefreshToken = require("../config/jwtRefresh");
 const jwt = require("jsonwebtoken");
 const { response } = require("express");
-const sendMail = require('./emailController')
+const sendMail = require("./emailController");
+const crypto = require("crypto");
 
 // NEW USER
 const createUser = asyncHandler(async (req, res) => {
@@ -128,7 +129,7 @@ const updatePassword = asyncHandler(async (req, res) => {
 
 const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
-  const user = User.findOne({ email });
+  const user = await User.findOne({ email });
   if (!user) {
     throw new Error("User not found ");
   }
@@ -136,16 +137,35 @@ const forgotPassword = asyncHandler(async (req, res) => {
     const token = await user.passwordResetToken();
     await user.save();
     const resetURL = `Please follow link to reset the Password <a href="https://localhost:3001/api/users/reset-password/${token}">Click here</a>`;
-    const data ={
-      to:email,
-      text:"Hello user ",
-      subject:"Reset Password",
-      html:resetURL
-    }
-    sendMail(data)
-  } catch (err){
-      throw new Error(err);
+    const data = {
+      to: email,
+      text: "Hello user ",
+      subject: "Reset Password",
+      html: resetURL,
+    };
+    sendMail(data);
+    res.json(token);
+  } catch (err) {
+    throw new Error(err);
   }
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const { password } = req.body;
+  const { token } = req.params;
+  const hashToken = crypto.createHash("sha256").update(token).digest("hex");
+  const user = await User.findOne({
+    resetToken: hashToken,
+    resetExpires: { $gt: Date.now() },
+  });
+  if (!user) {
+    throw new Error("Token Expired");
+  }
+  user.password = password;
+  user.resetToken = undefined;
+  user.resetExpires = undefined;
+  await user.save();
+  res.json(user);  
 });
 
 // UPDATE USER
@@ -158,5 +178,6 @@ module.exports = {
   logoutUser,
   handleRefresh,
   updatePassword,
-  forgotPassword
+  forgotPassword,
+  resetPassword,
 };
