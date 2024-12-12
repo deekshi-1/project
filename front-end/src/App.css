@@ -25,7 +25,11 @@ img{
     margin: 0;
 }
 
-.heading{}
+.heading{
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
 .subHeading{
     font-size: 18px;
     margin-bottom: 10px;

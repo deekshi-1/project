@@ -1,0 +1,53 @@
+.Store-Wrapper {
+  display: flex;
+  justify-content: space-between;
+  padding: 2rem;
+  flex-wrap: wrap;
+  padding: 10px;
+  background-color: rgb(221, 231, 239);
+}
+
+.leftSide {
+  padding: 10px;
+  background: rgb(235, 249, 246);
+}
+
+.subHeading {
+  font-weight: 700;
+}
+
+.categoryHading {
+  font-weight: 600;
+}
+
+ul {
+  list-style-type: none;
+  cursor: pointer;
+}
+
+.color-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 1rem;
+}
+
+.products-sortSection {
+  padding-left: 20px;
+}
+
+.sorting-div {
+  padding: 10px;
+  background: rgb(235, 249, 246);
+}
+
+.select-section {
+  max-width: 300px;
+  margin-left: 20px;
+}
+
+.products {
+  gap: 7%;
+  flex-wrap: wrap;
+  justify-content: center;
+}

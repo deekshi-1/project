@@ -16,7 +16,7 @@ const Header = () => {
           </div>
         </div>
         <div className="headerWrapper category">
-          <Link to="/category">Category</Link>
+          <Link to="/store">Category</Link>
         </div>
         <div className="searchBar">
           <FaSearch className="searchIcon" />
