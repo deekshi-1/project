@@ -1,0 +1,31 @@
+.homewrapper {
+  background: rgb(2, 0, 36);
+  background: linear-gradient(
+    164deg,
+    rgba(2, 0, 36, 1) 0%,
+    rgba(216, 216, 224, 1) 0%,
+    rgba(162, 176, 250, 0.5551470588235294) 100%,
+    rgba(0, 212, 255, 1) 100%
+  );
+}
+
+.home-slider {
+  width: 100%;
+  height: 550px;
+  background-color: aqua;
+}
+
+.home-new-arrival {
+  padding: 3rem 20px;
+}
+
+.home-new-arrival > h2 {
+  font-weight: 800;
+}
+
+
+.new-arrival{
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 2%;
+}

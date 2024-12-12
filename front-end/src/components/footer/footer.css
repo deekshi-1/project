@@ -1,0 +1,65 @@
+.footer-wrapper {
+  padding: 15px;
+  background-color: #697565;
+  color: white;
+}
+
+.footerTopBlock {
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  padding: 10px 0;
+  border-bottom: 1px solid white;
+}
+.btn {
+  margin-top: -6px;
+}
+.newletterIcon {
+  height: 40px;
+  width: 40px;
+  margin-right: 20px;
+}
+
+input {
+  padding: 10px;
+  height: 37px;
+}
+
+.midBlock {
+  padding: 20px 10px;
+  justify-content: space-between;
+  border-bottom: 1px solid white;
+}
+
+.storeIcons {
+  flex-wrap: wrap;
+  justify-content: start;
+  gap: 20px;
+}
+.storeIcons > a > img {
+  width: auto;
+  height: 42px;
+}
+
+.category-description > a {
+  color: white;
+  margin-right: 10px;
+}
+
+.social-icon-div {
+  display: flex;
+  gap: 10px;
+}
+
+.social-icon-div > a {
+  color: white;
+}
+
+.social-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.copyright-section {
+  text-align: center;
+}
