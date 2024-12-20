@@ -1,32 +1,101 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const mongoose = require("mongoose"); // Erase if already required
 
-const OrderSchema = new Schema(
+// Declare the Schema of the Mongo model
+var orderSchema = new mongoose.Schema(
   {
-    products: [
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required:true
+    },
+    shippingInfo: {
+      firstName: {
+        type: String,
+        required:true
+      },
+      lastName: {
+        type: String,
+        required:true
+      }
+      ,
+      address: {
+        type: String,
+        required:true
+      },
+      city: {
+        type: String,
+        required:true
+      },
+      state: {
+        type: String,
+        required:true
+      },
+      other: {
+        type: String,
+        required:true
+      }
+      ,
+      pincode: {
+        type: Number,
+        required:true
+      }
+    },
+    paymentInfo: {
+      razorpayOrderId: {
+        type: String,
+        required: true
+      },
+      razorpayPaymentId: {
+        type: String,
+        required: true
+      }
+    },
+    orderItems: [
       {
         product: {
-          type: Schema.Types.ObjectId,
+          type: mongoose.Schema.Types.ObjectId,
           ref: "Product",
+          required:true
         },
-        count: Number,
-        color: String,
-      },
+        color: {
+          type:String,
+          required:true
+        },
+        quantity: {
+          type: Number,
+          required:true
+        },
+        price: {
+          type: Number,
+          required:true
+        }
+      }
     ],
-    paymentIntent:{},
-    orderStatus:{
-        type:String,
-        default:"Not Processed",
-        enum:[
-            "Not Processed","Processing","Dispatched","Cancelled","Delivered"
-        ],
+    paidAt: {
+      type: Date,
+      default:Date.now()
     },
-    orderby:{
-        type: Schema.Types.ObjectId,
-          ref: "User",
+    month: {
+      type: String,
+      default:new Date().getMonth()
+    },
+    totalPrice: {
+      type: Number,
+      required:true
+    },
+    totalPriceAfterDiscount: {
+      type: Number,
+      required:true
+    },
+    orderStaus: {
+      type: String,
+      default:"Ordered"
     }
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-module.exports = mongoose.model("Order", OrderSchema);
+//Export the model
+module.exports = mongoose.model("Order", orderSchema);

@@ -36,10 +36,10 @@ const UserSchema = new Schema(
       default: [],
     },
     address: {
-      type: Array,
+      type:String,
       default: [],
     },
-    wishList: [{ type: mongoose.Schema.Types.ObjectId, ref: "product" }],
+    wishList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
     refreshToken: {
       type: String,
     },

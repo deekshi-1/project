@@ -1,5 +1,6 @@
 import React from "react";
 import "./footer.css";
+import { Link } from "react-router-dom";
 import {
   TbMailbox,
   TbBrandInstagram,
@@ -31,9 +32,15 @@ const Footer = () => {
         </div>
         <div className="col-3">
           <div className="subHeading">Customer Relation</div>
-          <div className="description">FAQ</div>
-          <div className="description">Privacy policy</div>
-          <div className="description">T&C</div>
+          <div className="description">
+            <Link to="/faq">FAQ</Link>
+          </div>
+          <div className="description">
+            <Link to="/privacy">Privacy policy</Link>
+          </div>
+          <div className="description">
+            <Link to="/terms-and-condition">T&C</Link>
+          </div>
         </div>
         <div className="col-4">
           <div className="subHeading">Our App</div>
@@ -49,7 +56,7 @@ const Footer = () => {
       </div>
       <div className="d-flex midBlock category-section">
         <div className="col-5">
-          <div className="subHeading">Contact us</div>
+          <div className="subHeading midBlock-subHeading">Contact us</div>
           <div className="category-description description">
             <address>
               Deepa Nivas Pulliode
@@ -63,7 +70,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="col-5 ">
-          <div className="subHeading">Socials</div>
+          <div className="subHeading midBlock-subHeading">Socials</div>
           <div className="social-icon-div">
             <a href="https://www.instagram.com/_deekshi_._/?hl=en">
               <TbBrandInstagram className="social-icon" />

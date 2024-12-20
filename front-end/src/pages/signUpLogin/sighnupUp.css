@@ -1,0 +1,41 @@
+.login-wrappper {
+  padding: 20px;
+  background-color: white;
+  border: 1px solid rgba(40, 38, 36, 0.715);
+  max-width: 400px;
+  margin: auto;
+  border-radius: 15px;
+}
+
+.subHeading {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.forgot-password {
+  color: black;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.button-wrapper {
+  gap: 10px;
+}
+.button {
+  padding: 5px;
+  color: white;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+.error {
+  color: red;
+  font-size: 15px;
+  position: relative;
+}
+
+.error > span {
+  position: absolute;
+  top: -25px;
+  left: 6px;
+  font-size: 12px;
+}

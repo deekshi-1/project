@@ -12,7 +12,10 @@
 .home-slider {
   width: 100%;
   height: 550px;
-  background-color: aqua;
+  background-image: url('../../../public/images/homeBaner.jpeg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .home-new-arrival {

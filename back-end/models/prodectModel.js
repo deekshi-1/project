@@ -8,6 +8,12 @@ const ProductSchema = new Schema(
       required: true,
       trim: true,
     },
+    short_description: {
+      type: String,
+      required: true,
+      trim: true,
+      default: "brandname,quantiy",
+    },
     slug: {
       type: String,
       required: true,
@@ -27,7 +33,7 @@ const ProductSchema = new Schema(
       ref: "Category",
     },
     brand: { type: String, enum: ["Samsung", "Apple", "LG"] },
-    color: { type: String, enum: ["Black", "Red", "Blue"] },
+    color: { type: Array },
     quantity: Number,
     sold: {
       type: Number,

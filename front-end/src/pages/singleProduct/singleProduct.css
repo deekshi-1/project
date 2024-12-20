@@ -1,0 +1,25 @@
+.main-product-wrapper {
+  padding: 2rem;
+}
+
+.productImg {
+  max-width: 400px;
+}
+
+.review-Section {
+  margin-top: 3rem;
+}
+
+.add-review {
+  padding: 1rem;
+  border: 1px solid black;
+  margin-bottom: 20px;
+  background-color: white;
+}
+.form-control{
+    border: 1px solid black;
+}
+
+.qntyInput{
+  max-width: 70px;
+}

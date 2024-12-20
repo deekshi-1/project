@@ -54,7 +54,7 @@ const loginUser = asyncHandler(async (req, res) => {
       res.json({
         name: checkUser?.firstName,
         email: checkUser?.email,
-        token: generateToken(checkUser?._id),
+        token: refreshToken,
       });
     }
   }
@@ -89,7 +89,6 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 const deleteUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  console.log(req.user);
 
   try {
     const deleteUser = await User.findById(id);
@@ -177,7 +176,7 @@ const resetPassword = asyncHandler(async (req, res) => {
 const getWishList = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   try {
-    const findUser = await User.findById(_id).populate("wishlist");
+    const findUser = await User.findById(_id).populate("wishList");
     res.json(findUser);
   } catch (err) {
     throw new Error(err);
@@ -203,58 +202,65 @@ const addAddress = asyncHandler(async (req, res) => {
 
 //CART
 const userCart = asyncHandler(async (req, res) => {
-  const { cart } = req.body;
+  const { productId, color, quantity, price } = req.body;
   const { _id } = req.user;
   try {
-    let products = [];
-    const user = await User.findById(_id);
-    const cartExist = await Cart.findOne({ orderby: user._id });
-    if (cartExist) {
-      cartExist.remove();
-    }
-    for (let i = 0; i < cart.length; i++) {
-      let obj = {};
-      obj.product = cart[i]._id;
-      obj.count = cart[i].count;
-      obj.color = cart[i].color;
-      let getPrice = await Product.findById(cart[i]._id).select("Price").exec();
-      obj.price = getPrice;
-      products.push(obj);
-    }
-    let cartTotal = 0;
-    for (let i = 0; i < products.length; i++) {
-      cartTotal = cartTotal + products[i].price * products[i].count;
-    }
     let newCart = await new Cart({
-      products,
-      cartTotal,
-      orderby: user?._id,
+      userId: _id,
+      productId,
+      color,
+      price,
+      quantity,
     }).save();
     res.json(newCart);
-  } catch (err) {
-    throw new Error(err);
+  } catch (error) {
+    throw new Error(error);
   }
 });
 
 const getUserCart = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   try {
-    const cart = await Cart.findOne({ orderby: _id }).populate(
-      "products.product"
-    );
+    const cart = await Cart.find({ userId: _id }).populate("productId");
     res.json(cart);
-  } catch (err) {
-    throw new Error(err);
+  } catch (error) {
+    throw new Error(error);
   }
 });
-const emptyCart = asyncHandler(async (req, res) => {
+// const emptyCart = asyncHandler(async (req, res) => {
+//   const { _id } = req.user;
+//   try {
+//     const cart = await Cart.findOneAndRemove({ userId: _id });
+//     res.json(cart);
+//   } catch (err) {
+//     throw new Error(err);
+//   }
+// });
+
+const removeCartProduct = asyncHandler(async (req, res) => {
   const { _id } = req.user;
+  const { cartItemId } = req.params;
   try {
-    const user = await User.findOne({ _id });
-    const cart = await Cart.findOneAndRemove({ orderby: user._id });
-    res.json(cart);
-  } catch (err) {
-    throw new Error(err);
+    const deleteProductFromCart = await Cart.deleteOne({
+      userId: _id,
+      _id: cartItemId,
+    });
+    res.json(deleteProductFromCart);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+const updatePrdQnty = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { cartItemId, newQnty } = req.params;
+  try {
+    const cartItem = await Cart.findOne({ userId: _id, _id: cartItemId });
+    cartItem.quantity = newQnty;
+    cartItem.save();
+    res.json(cartItem);
+  } catch (error) {
+    throw new Error(error);
   }
 });
 
@@ -307,7 +313,6 @@ const getOrders = asyncHandler(async (req, res) => {
   }
 });
 
-
 // UPDATE USER
 const updateUser = asyncHandler(async (req, res) => {});
 
@@ -324,7 +329,9 @@ module.exports = {
   addAddress,
   userCart,
   getUserCart,
-  emptyCart,
+  // emptyCart,
   createOrder,
   getOrders,
+  removeCartProduct,
+  updatePrdQnty,
 };

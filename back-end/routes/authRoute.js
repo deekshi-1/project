@@ -10,12 +10,13 @@ const {
   forgotPassword,
   resetPassword,
   getWishList,
+  removeCartProduct,
   addAddress,
   userCart,
   getUserCart,
-  emptyCart,
   createOrder,
-  getOrders,updateOrderStatus,
+  getOrders,
+  updatePrdQnty,
 } = require("../controller/userController");
 const authMiddleware = require("../middleware/auth");
 
@@ -31,9 +32,19 @@ router.get("/cart", authMiddleware, getUserCart);
 router.get("/get-orders", authMiddleware, getOrders);
 
 router.post("/cart/cash-order", authMiddleware, createOrder);
-router.delete("/empty-cart", authMiddleware, emptyCart);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:token", resetPassword);
 router.get("/wishlist", authMiddleware, getWishList);
 router.get("/addAddress", authMiddleware, addAddress);
+router.delete(
+  "/remove-cart-item/:cartItemId",
+  authMiddleware,
+  removeCartProduct
+);
+router.delete(
+  "/update-cart-item/:cartItemId/:newQnty",
+  authMiddleware,
+  updatePrdQnty
+);
+
 module.exports = router;

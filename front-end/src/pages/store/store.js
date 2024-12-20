@@ -1,8 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./store.css";
 import ProductCard from "../../components/productCard/productCard";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllProduct } from "../../features/product/productSlice";
 
 const Store = () => {
+  const dispatch = useDispatch();
+  const productState = useSelector((state) => state?.product?.product );  
+  const getProduct = () => {
+    dispatch(getAllProduct());
+  };
+  
+    useEffect(() => {
+      getProduct();
+    },[]);
+
   return (
     <div className="Store-Wrapper pt-5">
       <div className="col-3 leftSide">
@@ -14,7 +26,7 @@ const Store = () => {
         <h4 className="subHeading mt-5">Filter Products</h4>
         <div className="filtersection">
           <h5 className="subHeading categoryHading">Price</h5>
-          <div className="d-flex align-items-center gap-10">
+          <div className="d-flex align-items-center gap-3">
             <div className="form-floating mb-3">
               <input
                 type="number"
@@ -86,7 +98,11 @@ const Store = () => {
         <div className="sorting-div mb-5">
           <div className="d-flex align-items-center gap-10">
             <h5 className="subHeading">Sort By:</h5>
-            <select name="" className="ps-2 form-control form-select select-section" id="">
+            <select
+              name=""
+              className="ps-2 form-control form-select select-section"
+              id=""
+            >
               <option value="popular">Popular</option>
               <option value="name-Asc">Alphebetically A-Z</option>
               <option value="name-Desc">Alphebetically Z-A</option>
@@ -97,7 +113,10 @@ const Store = () => {
           </div>
         </div>
         <div className="products d-flex">
-        <ProductCard/><ProductCard/><ProductCard/> <ProductCard/><ProductCard/><ProductCard/>
+          {productState &&
+            productState.map((item) => (
+              <ProductCard data={item} key={item._id} />
+            ))}
         </div>
       </div>
     </div>

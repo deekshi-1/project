@@ -4,7 +4,7 @@
     align-items: center;
     color: whitesmoke;
 }
-.row > div {
+.fit-width{
     width: fit-content;
 }
 .headerWrapper-Left {
