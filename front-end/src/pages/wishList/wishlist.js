@@ -7,11 +7,7 @@ import { Link } from "react-router-dom";
 
 const Wishlist = () => {
   const dispatch = useDispatch();
-  const wishListState = useSelector((state) => state?.auth?.wishlist?.wishList);
-  
-  useEffect(() => {
-    dispatch(listwishList());
-  }, []);
+  const wishListState = useSelector((state) => state?.auth?.wishlist);
 
   const removeFromWishList = (id) => {
     dispatch(wishlist(id));

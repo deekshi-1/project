@@ -9,7 +9,7 @@ const authMiddleware = require("../middleware/auth");
 
 const router = express.Router();
 
-router.get("/all", allProduct);
+router.get("/", allProduct);
 router.get("/:id", findProduct);
 router.post("/add", addProduct);
 router.put("/wishlist", authMiddleware, addToWishList);

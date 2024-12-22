@@ -21,9 +21,10 @@ img {
   margin: auto;
   background-color: rgb(221, 231, 239);
 }
-.mainWrapper > div {
+.mainWrapper  {
   width: 100%;
   margin: 0;
+  margin: auto;
 }
 
 .heading {
@@ -46,4 +47,15 @@ img {
   border: 1px solid black;
   margin-bottom: 20px;
   background-color: white;
+}
+
+.removeBtnOuter{
+  border: none;
+  background: none;
+}
+
+.Page-wrapper{
+  padding: 3rem !important;
+  margin: 0 !important;
+  width: auto !important;
 }

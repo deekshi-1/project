@@ -1,8 +1,30 @@
 import React from "react";
 import "./sighnupUp.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import InputField from "../../components/InputField";
+import { useDispatch } from "react-redux";
+import { useFormik } from "formik";
+import * as yup from "yup";
+import { forgotPass } from "../../features/user/userSlice";
+
+const emailSchema = yup.object({
+  email: yup
+    .string()
+    .email("EMail Should be valid")
+    .required("Email Address is Required"),
+});
 
 const Forgot = () => {
+  const dispatch = useDispatch();
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+    },
+    validationSchema: emailSchema,
+    onSubmit: (values) => {
+      dispatch(forgotPass(values));
+    },
+  });
   return (
     <div className="py-5 ">
       <div className="row justify-content-center align-items-center login-wrappper">
@@ -12,25 +34,29 @@ const Forgot = () => {
             <h6 className="text-center description mb-3">
               Will send you reset link{" "}
             </h6>
-            <form>
-              <div>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  className="form-control mb-4"
-                />
+            <form
+              action=""
+              onSubmit={formik.handleSubmit}
+              className="d-flex flex-column gap-15"
+            >
+              <InputField
+                type="email"
+                name="email"
+                placeholder="Email"
+                className="mb-4"
+                onChange={formik.handleChange("email")}
+                value={formik.values.email}
+                onBlur={formik.handleBlur("email")}
+              />
+              <div className="error">
+                <span>{formik.touched.email && formik.errors.email}</span>
               </div>
               <div>
-                <div className="d-flex justify-content-center align-items-center button-wrapper">
-                  <button className="btn btn-primary  button description">
+                <div className="mt-3 d-flex justify-content-center flex-column gap-15 align-items-center">
+                  <button className="button border-0 black p-2 mb-2" type="submit">
                     Reset
                   </button>
-                  <Link to="/">
-                    <button className="btn btn-danger button description">
-                      Cancel
-                    </button>
-                  </Link>
+                  <Link className="black" to="/login">Cancel</Link>
                 </div>
               </div>
             </form>

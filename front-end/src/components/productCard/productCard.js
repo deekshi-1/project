@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./productCard.css";
 import { Link, useLocation } from "react-router-dom";
 import { GoHeart, GoHeartFill } from "react-icons/go";
@@ -6,8 +6,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { wishlist } from "../../features/product/productSlice";
 
 const ProductCard = (props) => {
+  const { wishlist } = useSelector((state) => state.auth);
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+ useEffect(() => {
+    getProduct();
+  }, []);
   const { data, buttonName } = props;
   let loc = useLocation();
   const addtoWishList = (id) => {

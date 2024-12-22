@@ -7,6 +7,7 @@ import { getAllProduct } from "../../features/product/productSlice";
 const Home = () => {
   const dispatch = useDispatch();
   const productState = useSelector((state) => state?.product?.product);
+  const wihlist = useSelector((state) => state?.product?.product);
   const getProduct = () => {
     dispatch(getAllProduct());
   };
@@ -22,9 +23,11 @@ const Home = () => {
         <h2>New Arrivals</h2>
         <div className="mt-5 d-flex new-arrival">
           {productState &&
-            productState.map((item) => (
-              <ProductCard data={item} key={item._id} />
-            ))}
+            productState.map((item) => {
+              if (true) {
+                return <ProductCard data={item} key={item._id} />;
+              }
+            })}
         </div>
       </div>
     </div>

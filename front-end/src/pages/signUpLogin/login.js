@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import InputField from "../../components/InputField";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../features/user/userSlice";
 import "./sighnupUp.css";
 import { Link } from "react-router-dom";
@@ -34,7 +34,8 @@ const Login = () => {
       if (message) {
         toast.error(message);
       } else {
-        alert("login sucessfull")
+        toast.info("login sucessfull");
+        navigate("/");
       }
     }
   }, [isSuccess, message, navigate]);
@@ -97,5 +98,3 @@ const Login = () => {
 };
 
 export default Login;
-
-

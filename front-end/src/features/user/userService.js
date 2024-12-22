@@ -14,6 +14,28 @@ const login = async (data) => {
     return response.data;
   }
 };
+
+const forgotPassword = async (data) => {
+  console.log(data);
+
+  const response = await axios.post(`${base_url}user/forgot-password`, data);
+  if (response.data) {
+    console.log(response);
+    return response.data;
+  }
+};
+
+const resetPassword = async (data) => {
+  console.log(data);
+  const response = await axios.post(`${base_url}user/reset-password/${data.token}`,
+    { password: data?.password }
+  );
+  if (response.data) {
+    console.log(response);
+    return response.data;
+  }
+};
+
 const getWishList = async (data) => {
   const response = await axios.get(
     `${base_url}user/wishlist`,
@@ -39,6 +61,17 @@ const getCart = async () => {
     return response.data;
   }
 };
+const updateUser = async (data) => {
+  const response = await axios.put(
+    `${base_url}user/update-user`,
+    data,
+    getAuthHeaders()
+  );
+  if (response.data) {
+    console.log(response);
+    return response.data;
+  }
+};
 const removeCartitem = async (cartItemId) => {
   const response = await axios.delete(
     `${base_url}user/remove-cart-item/${cartItemId}`,
@@ -58,6 +91,26 @@ const updateCartitem = async (data) => {
     return response.data;
   }
 };
+const createOrder = async (orderDetail) => {
+  const response = await axios.post(
+    `${base_url}user/cart/create-order`,
+    orderDetail,
+    getAuthHeaders()
+  );
+  if (response.data) {
+    return response.data;
+  }
+};
+
+const getUserOrders = async () => {
+  const response = await axios.get(
+    `${base_url}user/myorders`,
+    getAuthHeaders()
+  );
+  if (response.data) {
+    return response.data;
+  }
+};
 
 export const authService = {
   registerUser,
@@ -67,4 +120,9 @@ export const authService = {
   getCart,
   removeCartitem,
   updateCartitem,
+  createOrder,
+  getUserOrders,
+  updateUser,
+  forgotPassword,
+  resetPassword,
 };

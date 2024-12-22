@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { BiArrowBack } from "react-icons/bi";
+import "./checkout.css";
+
 import {
   MDBBtn,
   MDBCard,
   MDBCardBody,
   MDBCardHeader,
-  MDBCheckbox,
   MDBCol,
   MDBInput,
   MDBListGroup,
@@ -13,8 +16,172 @@ import {
   MDBTextArea,
   MDBTypography,
 } from "mdb-react-ui-kit";
+import { useDispatch, useSelector } from "react-redux";
+import { useFormik } from "formik";
+import * as yup from "yup";
+import axios from "axios";
+import { getAuthHeaders, base_url } from "../../utils/axiosConfig";
+import { order, viewCart } from "../../features/user/userSlice";
 
-export default function CheckOut() {
+const shippingSchema = yup.object({
+  firstName: yup.string().required("First Name is Required"),
+  lastName: yup.string().required("Last Name is Required"),
+  address: yup.string().required("Address Details are Required"),
+  state: yup.string().required("State is Required"),
+  city: yup.string().required("City is Required"),
+  country: yup.string().required("Country is Required"),
+  pincode: yup.number().required("Pincode is Required"),
+  other:yup.string()
+});
+
+const CheckOut = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(viewCart());
+  }, []);
+  const cartState = useSelector((state) => state.auth.cartProduct);
+  const [totalAmount, setTotalAmount] = useState(null);
+  const [shippingInfo, setShippingInfo] = useState(null);
+  const [paymentInfo, setPaymentInfo] = useState({
+    razorpayPaymentId: "",
+    razorpayOrderId: "",
+  });
+  const [cartProductState, setCartProductState] = useState(null);
+  useEffect(() => {
+    let sum = 0;
+    for (let index = 0; index < cartState?.length; index++) {
+      sum = sum + Number(cartState[index].quantity) * cartState[index].price;
+      setTotalAmount(sum);
+    }
+  }, [cartState]);
+  const formik = useFormik({
+    initialValues: {
+      firstName: "",
+      lastName: "",
+      address: "",
+      state: "",
+      city: "",
+      country: "",
+      pincode: "",
+      other: "",
+    },
+    validationSchema: shippingSchema,
+    onSubmit: (values) => {
+      setShippingInfo(values);
+      console.log(shippingInfo);
+      
+      setTimeout(() => {
+        checkOutHandler();
+      }, 300);
+    },
+  });
+
+  const loadScript = (src) => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    });
+  };
+  useEffect(() => {
+    if (cartState) {
+      let items = [];
+      for (let index = 0; index < cartState?.length; index++) {
+        items.push({
+          product: cartState[index].productId._id,
+          quantity: cartState[index].quantity,
+          color: cartState[index].color,
+          price: cartState[index].price,
+        });
+      }
+      setCartProductState(items);
+    }
+  }, [cartState]);
+  const checkOutHandler = async () => {
+    const res = await loadScript(
+      "https://checkout.razorpay.com/v1/checkout.js"
+    );
+    if (!res) {
+      alert("Razorpay SDK failed to Load");
+      return;
+    }
+
+    const result = await axios.post(
+      `${base_url}user/order/checkout`,
+      { amount: totalAmount + 10 },
+      getAuthHeaders()
+    );
+    if (!result) {
+      alert("Something Went Wrong");
+      return;
+    }
+
+    const { amount, id: order_id, currency } = result.data.order;
+    const options = {
+      key: "rzp_test_L8qFGRbJYsRKed",
+      amount: amount,
+      currency: "INR",
+      name: "shopyfy",
+      description: "shopyfy Test Transaction",
+
+      order_id: order_id,
+      handler: async function (response) {
+        const data = {
+          orderCreationId: order_id,
+          razorpayPaymentId: response.razorpay_payment_id,
+          razorpayOrderId: response.razorpay_order_id,
+        };
+
+        const result = await axios.post(
+          `${base_url}user/order/paymentVerification`,
+          data,
+          getAuthHeaders()
+        );
+
+        await setPaymentInfo({
+          razorpayPaymentId: response.razorpayPaymentId,
+          razorpayOrderId: response.razorpayOrderId,
+        });
+
+        setTimeout(() => {
+          console.log( response.razorpay_payment_id,response.razorpay_order_id);
+          
+          dispatch(
+            order({
+              totalPrice: totalAmount,
+              orderItems: cartProductState,
+              paymentInfo: {
+                razorpayPaymentId: response.razorpay_payment_id,
+                razorpayOrderId: response.razorpay_order_id,
+              },
+              shippingInfo,
+            })
+          );
+        }, 1000);
+      },
+      prefill: {
+        name: "shopyfy",
+        email: "shopyfy@example.com",
+        contact: "9544540988",
+      },
+      notes: {
+        address: "shoyfy kannur",
+      },
+      theme: {
+        color: "#61dafb",
+      },
+    };
+
+    const paymentObject = new window.Razorpay(options);
+    paymentObject.open();
+  };
+
   return (
     <div className="mx-auto mt-5" style={{ maxWidth: "900px" }}>
       <MDBRow>
@@ -26,25 +193,118 @@ export default function CheckOut() {
               </MDBTypography>
             </MDBCardHeader>
             <MDBCardBody>
-              <form>
+              <form onSubmit={formik.handleSubmit}>
                 <MDBRow className="mb-4">
                   <MDBCol>
-                    <MDBInput label="First name" type="text" />
+                    <MDBInput
+                      label="First name"
+                      type="text"
+                      name="firstName"
+                      value={formik.values.firstName}
+                      onChange={formik.handleChange("firstName")}
+                      onBlur={formik.handleBlur("firstName")}
+                    />
+                    <div className="error">
+                      {formik.touched.firstName && formik.errors.firstName}
+                    </div>
                   </MDBCol>
                   <MDBCol>
-                    <MDBInput label="Last name" type="text" />
+                    <MDBInput
+                      label="Last name"
+                      type="text"
+                      value={formik.values.lastName}
+                      name="lastName"
+                      onChange={formik.handleChange("lastName")}
+                      onBlur={formik.handleBlur("lastName")}
+                    />
+                    <div className="error">
+                      {formik.touched.lastName && formik.errors.lastName}
+                    </div>
                   </MDBCol>
                 </MDBRow>
-
-                <MDBInput label="Company name" type="text" className="mb-4" />
-                <MDBInput label="Address" type="text" className="mb-4" />
-                <MDBInput label="Email" type="text" className="mb-4" />
-                <MDBInput label="Phone" type="text" className="mb-4" />
+                <MDBInput
+                  label="Address"
+                  type="text"
+                  className="mt-3"
+                  name="address"
+                  value={formik.values.address}
+                  onChange={formik.handleChange("address")}
+                  onBlur={formik.handleBlur("address")}
+                />
+                <div className="error">
+                  {formik.touched.address && formik.errors.address}
+                </div>
+                <MDBRow className="mt-4">
+                  <MDBCol>
+                    <MDBInput
+                      label="City"
+                      type="text"
+                      name="city"
+                      value={formik.values.city}
+                      onChange={formik.handleChange("city")}
+                      onBlur={formik.handleBlur("city")}
+                    />
+                    <div className="error">
+                      {formik.touched.city && formik.errors.city}
+                    </div>
+                  </MDBCol>
+                  <MDBCol>
+                    <MDBInput
+                      label="State"
+                      name="state"
+                      value={formik.values.state}
+                      onChange={formik.handleChange("state")}
+                      onBlur={formik.handleBlur("state")}
+                    />
+                    <div className="error">
+                      {formik.touched.state && formik.errors.state}
+                    </div>
+                  </MDBCol>
+                </MDBRow>
+                <MDBRow className="mt-4">
+                  <MDBCol>
+                    <MDBInput
+                      label="Country"
+                      name="country"
+                      value={formik.values.country}
+                      onChange={formik.handleChange("country")}
+                      onBlur={formik.handleBlur("country")}
+                    />
+                    <div className="error">
+                      {formik.touched.country && formik.errors.country}
+                    </div>
+                  </MDBCol>
+                  <MDBCol>
+                    <MDBInput
+                      label="Pincode"
+                      name="pincode"
+                      value={formik.values.pincode}
+                      onChange={formik.handleChange("pincode")}
+                      onBlur={formik.handleBlur("pincode")}
+                    />
+                    <div className="error">
+                      {formik.touched.pincode && formik.errors.pincode}
+                    </div>
+                  </MDBCol>
+                </MDBRow>
                 <MDBTextArea
                   label="Additional information"
                   rows={4}
-                  className="mb-4"
+                  className="mt-4"
+                  name="other"
+                  value={formik.values.other}
+                  onChange={formik.handleChange("other")}
+                  onBlur={formik.handleBlur("other")}
                 />
+                <div className="w-100 mt-3">
+                  <Link to="/cart" className="text-dark">
+                    <BiArrowBack className="me-2" />
+                    Return to Cart
+                  </Link>
+                  <button className="btn btn-primary float-right" type="submit">
+                    Make purchase
+                  </button>
+                </div>
               </form>
             </MDBCardBody>
           </MDBCard>
@@ -57,14 +317,21 @@ export default function CheckOut() {
               </MDBTypography>
             </MDBCardHeader>
             <MDBCardBody>
-              <MDBListGroup flush>
-                <MDBListGroupItem className="d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                  Products
-                  <span>$53.98</span>
-                </MDBListGroupItem>
+              <MDBListGroup>
+                {cartState &&
+                  cartState?.map((item) => (
+                    <MDBListGroupItem
+                      className="d-flex justify-content-between align-items-center border-0 px-0 pb-0"
+                      key={item._id}
+                    >
+                      {item?.productId?.title}x{item?.quantity}
+                      <span>${item?.quantity * item?.price}</span>
+                    </MDBListGroupItem>
+                  ))}
+
                 <MDBListGroupItem className="d-flex justify-content-between align-items-center px-0">
                   Shipping
-                  <span>Gratis</span>
+                  <span>$10</span>
                 </MDBListGroupItem>
                 <MDBListGroupItem className="d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                   <div>
@@ -74,18 +341,16 @@ export default function CheckOut() {
                     </strong>
                   </div>
                   <span>
-                    <strong>$53.98</strong>
+                    <strong>${totalAmount + 10}</strong>
                   </span>
                 </MDBListGroupItem>
               </MDBListGroup>
-
-              <MDBBtn size="lg" block>
-                Make purchase
-              </MDBBtn>
             </MDBCardBody>
           </MDBCard>
         </MDBCol>
       </MDBRow>
     </div>
   );
-}
+};
+
+export default CheckOut;

@@ -68,3 +68,7 @@ input {
 .subHeading {
   text-align: left !important;
 }
+
+.fit-content{
+  width: fit-content;
+}

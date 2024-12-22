@@ -15,6 +15,11 @@ import TandC from "./pages/customerRelation/tandc";
 import SingleProduct from "./pages/singleProduct/singleProduct";
 import CheckOut from "./pages/Checkout/checkout";
 import "./App.css";
+import { PrivateRoutes } from "./route/privateRoute";
+import { PublicRoutes } from "./route/publicRoute";
+import Order from "./pages/Order/order";
+import Reset from "./pages/signUpLogin/reset";
+
 function App() {
   return (
     <div className="App">
@@ -24,13 +29,64 @@ function App() {
             <Route index element={<Home />} />
             <Route path="store" element={<Store />} />
             <Route path="product/:id" element={<SingleProduct />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="cart" element={<Cart />} />
-            <Route path="wishlist" element={<Wishlist />} />
-            <Route path="checkout" element={<CheckOut />} />
-            <Route path="signup" element={<Signup />} />
-            <Route path="login" element={<Login />} />
+            <Route
+              path="profile"
+              element={
+                <PrivateRoutes>
+                  <Profile />
+                </PrivateRoutes>
+              }
+            />
+            <Route
+              path="my-Order"
+              element={
+                <PrivateRoutes>
+                  <Order />
+                </PrivateRoutes>
+              }
+            />
+            <Route
+              path="cart"
+              element={
+                <PrivateRoutes>
+                  <Cart />
+                </PrivateRoutes>
+              }
+            />
+            <Route
+              path="wishlist"
+              element={
+                <PrivateRoutes>
+                  <Wishlist />
+                </PrivateRoutes>
+              }
+            />
+            <Route
+              path="checkout"
+              element={
+                <PrivateRoutes>
+                  <CheckOut />
+                </PrivateRoutes>
+              }
+            />
+            <Route
+              path="signup"
+              element={
+                <PublicRoutes>
+                  <Signup />
+                </PublicRoutes>
+              }
+            />
+            <Route
+              path="login"
+              element={
+                <PublicRoutes>
+                  <Login />
+                </PublicRoutes>
+              }
+            />
             <Route path="forgot-password" element={<Forgot />} />
+            <Route path="reset-password/:token" element={<Reset />} />
             <Route path="faq" element={<Faq />} />
             <Route path="privacy" element={<Privacy />} />
             <Route path="terms-and-condition" element={<TandC />} />

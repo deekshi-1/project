@@ -19,6 +19,12 @@ const SingleProduct = () => {
   const dispatch = useDispatch();
   const productState = useSelector((state) => state?.product?.singleProduct);
   const cartState = useSelector((state) => state?.auth?.cartProduct);
+  const userState = useSelector((state) => state?.auth?.user);
+  const [filtered, setFiltered] = useState(null);
+  const [userReview, setuserReview] = useState(null);
+  const [] = useState(true);
+  console.log(productState?.rating);
+
   const addToCart = () => {
     if (color === null) {
       toast.error("pick a color");
@@ -43,12 +49,22 @@ const SingleProduct = () => {
   }, []);
 
   useEffect(() => {
-    for (let i = 0; i < cartState?.length; i++) {
-      if (id === cartState[i].productId?._id) {
-        setAlreadyExist(true);
-      }
-    }
-  }, [alreadExist, addCart()]);
+    let nArray = productState?.rating?.filter(
+      (rating) => rating.postedBy.toString() !== userState._id
+    );
+    console.log(nArray);
+  }, [productState]);
+
+  useEffect(() => {
+    const nArray = productState?.rating?.filter(
+      (rating) => rating.postedBy.toString() !== userState._id
+    );
+    const uArray = productState?.rating?.filter(
+      (rating) => rating.postedBy.toString() !== userState._id
+    );
+    setFiltered(nArray);
+    setuserReview(uArray);
+  }, [productState, userState._id]);
 
   return (
     <div className="main-product-wrapper py-5">
@@ -126,24 +142,37 @@ const SingleProduct = () => {
             >
               {alreadExist ? "View Cart" : "Add to Cart"}
             </button>
-            <button type="button" className="btn btn-danger mx-3"></button>
           </div>
         </div>
       </div>
       <div className="review-Section">
         <div className="product-review">
           <h4 className="mb-3">Product Reviews</h4>
-          <ReviewCard />
-          <ReviewCard />
-          <ReviewCard />
-        </div>
-        <div className="add-review">
-          <h5>Add Review </h5>
-          <ReactStars count={5} size={24} color2={"#ffd700"} />
-          <div className="form-group">
-            <label>Write your review</label>
-            <textarea className="form-control" id="review1" rows="3"></textarea>
+          <div className="add-review">
+            { }
+            <h5>Add Review </h5>
+            <ReactStars
+              count={5}
+              size={24}
+              value={userReview?.star}
+              color2={"#ffd700"}
+            />
+            <div className="form-group">
+              <label>Write your review</label>
+              <textarea
+                className="form-control"
+                id="review1"
+                rows="3"
+                value={userReview?.star}
+              ></textarea>
+              <button className=""></button>
+            </div>
           </div>
+
+          {filtered &&
+            filtered?.map((item, index) => (
+              <ReviewCard key={index} {...item} />
+            ))}
         </div>
       </div>
     </div>

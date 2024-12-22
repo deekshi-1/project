@@ -12,25 +12,18 @@ import {
 const Footer = () => {
   return (
     <div className="footer-wrapper">
-      <div className="mb-3 row footerTopBlock">
-        <div className="col-6 d-flex align-items-center">
+      <div className="mb-3 row footerTopBlock pb-3">
+        <div className="fit-content d-flex align-items-center">
           <TbMailbox className="newletterIcon" />
           Subscribe for Newsletter
         </div>
-        <div className="col-6">
+        <div className="fit-content">
           <input placeholder="Your eamil" />
           <button className="btn btn-secondary">Subscribe</button>
         </div>
       </div>
       <div className="d-flex midBlock">
-        <div className="col-3">
-          <div className="subHeading">Category</div>
-          <div className="description">pick1</div>
-          <div className="description">pick1</div>
-          <div className="description">pick1</div>
-          <div className="description">pick1</div>
-        </div>
-        <div className="col-3">
+        <div className="col-4">
           <div className="subHeading">Customer Relation</div>
           <div className="description">
             <Link to="/faq">FAQ</Link>
@@ -55,7 +48,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="d-flex midBlock category-section">
-        <div className="col-5">
+        <div className="col-4">
           <div className="subHeading midBlock-subHeading">Contact us</div>
           <div className="category-description description">
             <address>
@@ -69,7 +62,7 @@ const Footer = () => {
             <a href="mailto:deekshithc1@gmail.com">deekshithc1@gmail.com</a>
           </div>
         </div>
-        <div className="col-5 ">
+        <div className="col-4 ">
           <div className="subHeading midBlock-subHeading">Socials</div>
           <div className="social-icon-div">
             <a href="https://www.instagram.com/_deekshi_._/?hl=en">

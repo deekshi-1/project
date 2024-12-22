@@ -1,0 +1,11 @@
+.goBack{
+    cursor: pointer;
+}
+
+.goBack:hover{
+   color: black;
+}
+
+.float-right{
+    float: right !important;
+}

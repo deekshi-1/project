@@ -4,11 +4,21 @@ import { toast } from "react-toastify";
 
 export const getAllProduct = createAsyncThunk(
   "product/get",
-  async (thunkApi) => {
+  async (data, thunkApi) => {
     try {
-      return await productServices.getProducts();
+      return await productServices.getProducts(data);
     } catch (error) {
-      return thunkApi.rejectWithValue(error.response?.data || error.message);
+      return thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+export const getFilterProduct = createAsyncThunk(
+  "product/get/filter",
+  async (data, thunkApi) => {
+    try {
+      return await productServices.getProducts(data);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.message);
     }
   }
 );
@@ -57,10 +67,29 @@ const productSlice = createSlice({
         state.isSuccess = true;
         state.isError = false;
         state.product = action.payload;
-
+        state.filter =action.payload
         state.message = action.payload.message;
       })
       .addCase(getAllProduct.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+        if (state.isError === true) {
+          toast.error(state.message);
+        }
+      })
+      .addCase(getFilterProduct.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getFilterProduct.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.product = action.payload;
+        state.message = action.payload.message;
+      })
+      .addCase(getFilterProduct.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;

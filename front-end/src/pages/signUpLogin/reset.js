@@ -1,37 +1,63 @@
 import React from "react";
 import "./sighnupUp.css";
-import { Link } from "react-router-dom";
-
+import InputField from "../../components/InputField";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import * as yup from "yup";
+import { useFormik } from "formik";
+import { resetPass } from "../../features/user/userSlice";
+const passwordSchema = yup.object({
+  password: yup.string().required("Password is Required"),
+});
 
 const Reset = () => {
+  const location = useLocation();
+  const getToken = location.pathname.split("/")[2];
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const formik = useFormik({
+    initialValues: {
+      password: "",
+    },
+    validationSchema: passwordSchema,
+    onSubmit: (values) => {
+      console.log(getToken, values.password);
+
+      dispatch(resetPass({ token: getToken, password: values.password }));
+    },
+  });
   return (
     <div className="py-5 ">
       <div className="row justify-content-center align-items-center login-wrappper">
         <div className="col-12">
           <div className="input-section">
             <h4 className="subHeading">Reset Password</h4>
-            <form>
-              <div>
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="New Password"
-                  className="form-control mb-4"
-                />
+            <form
+              action=""
+              onSubmit={formik.handleSubmit}
+              className="d-flex flex-column gap-15"
+            >
+              <InputField
+                type="password"
+                name="password"
+                placeholder="Password"
+                className="mb-4"
+                onChange={formik.handleChange("password")}
+                value={formik.values.password}
+                onBlur={formik.handleBlur("password")}
+              />
+              <div className="error">
+                <span>{formik.touched.password && formik.errors.password}</span>
               </div>
-              <div>
-                <input
-                  type="password"
-                  name="confirm password"
-                  placeholder="Confirm Password"
-                  className="form-control mb-4"
-                />
-              </div>
+
               <div>
                 <div className="d-flex justify-content-center align-items-center button-wrapper">
-                  <Link>
-                    <button className="button btn1 description">Reset</button>
-                  </Link>
+                  <button
+                    className="button btn1 description black px-3"
+                    type="submit"
+                  >
+                    Reset
+                  </button>
                 </div>
               </div>
             </form>

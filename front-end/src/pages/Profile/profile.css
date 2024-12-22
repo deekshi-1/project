@@ -1,0 +1,20 @@
+.logoutButton{
+    border: none;
+    border: 1px solid rgb(49, 32, 32);
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: 800;
+    background: black;
+    color: white;
+}
+
+.myOrder>a{
+    padding: 10px;
+    color: rgb(91, 80, 80);
+    font-size: 20px;
+}
+
+.myOrder>a:hover{
+    color: black;
+    cursor: pointer;
+}

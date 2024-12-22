@@ -52,11 +52,43 @@ const loginUser = asyncHandler(async (req, res) => {
         maxAge: 72 * 60 * 60 * 1000,
       });
       res.json({
-        name: checkUser?.firstName,
+        _id: checkUser?._id,
+        firstName: checkUser?.firstName,
+        lastName: checkUser?.lastName,
         email: checkUser?.email,
+        mobile: checkUser?.mobile,
         token: refreshToken,
       });
     }
+  }
+});
+
+//update User
+const updateUser = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      _id,
+      {
+        firstName: req?.body?.firstName,
+        lastName: req?.body?.lastName,
+        email: req?.body?.email,
+        mobile: req?.body?.mobile,
+      },
+      {
+        new: true,
+      }
+    );
+    res.json({
+      _id: updatedUser?._id,
+      firstName: updatedUser?.firstName,
+      lastName: updatedUser?.lastName,
+      email: updatedUser?.email,
+      mobile: updatedUser?.mobile,
+      token: updatedUser?.refreshToken,
+    });
+  } catch (error) {
+    throw new Error(error);
   }
 });
 
@@ -133,13 +165,16 @@ const updatePassword = asyncHandler(async (req, res) => {
 const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
   const user = await User.findOne({ email });
+  console.log(email);
+  console.log(user);
+  
   if (!user) {
     throw new Error("User not found ");
   }
   try {
     const token = await user.passwordResetToken();
     await user.save();
-    const resetURL = `Please follow link to reset the Password <a href="https://localhost:3001/api/users/reset-password/${token}">Click here</a>`;
+    const resetURL = `Please follow link to reset the Password <a href="http://localhost:3000/reset-password/${token}">Click here</a>`;
     const data = {
       to: email,
       text: "Hello user ",
@@ -265,60 +300,44 @@ const updatePrdQnty = asyncHandler(async (req, res) => {
 });
 
 const createOrder = asyncHandler(async (req, res) => {
+  const { shippingInfo, orderItems, totalPrice, paymentInfo } = req.body;
   const { _id } = req.user;
-  const { COD } = req.body;
   try {
-    if (!COD) throw new Error("Cash on delivery failed");
-    const user = await User.findById(_id);
-    let userCart = await Cart.findOne({ orderby: user._id });
-    let total = userCart.total;
-    let newOrder = await new Order({
-      products: userCart.products,
-      paymentIntent: {
-        id: uniqid(),
-        method: "COD",
-        amount: total,
-        status: "Cash on delivery",
-        created: Date.now(),
-        currency: "inr",
-      },
-      orderby: user._id,
-      orderStatus: "Cash On Delivery",
-    }).save();
-    let update = userCart.products.map((item) => {
-      return {
-        updateOne: {
-          filter: { _id: item.product._id },
-          update: { $inc: { quantity: -item.count, sold: +item.count } },
-        },
-      };
+    const order = await Order.create({
+      shippingInfo,
+      orderItems,
+      totalPrice,
+      paymentInfo,
+      user: _id,
     });
-    const updated = await Product.bulkWrite(update, {});
-
-    res.json({ message: success });
-  } catch (err) {
-    throw new Error(err);
+    res.json({
+      order,
+      success: true,
+    });
+  } catch (error) {
+    throw new Error(error);
   }
 });
 
-const getOrders = asyncHandler(async (req, res) => {
+const getMyOrders = asyncHandler(async (req, res) => {
   const { _id } = req.user;
+
   try {
-    const userorder = await Order.findOne({ orderby: _id })
-      .populate("products.product")
-      .exec();
-    res.json(userorder);
-  } catch (err) {
-    throw new Error(err);
+    const orders = await Order.find({ user: _id }).populate(
+      "orderItems.product"
+    );
+    res.json({
+      orders,
+    });
+  } catch (error) {
+    throw new Error(error);
   }
 });
-
-// UPDATE USER
-const updateUser = asyncHandler(async (req, res) => {});
 
 module.exports = {
   createUser,
   loginUser,
+  updateUser,
   deleteUser,
   logoutUser,
   handleRefresh,
@@ -331,7 +350,7 @@ module.exports = {
   getUserCart,
   // emptyCart,
   createOrder,
-  getOrders,
+  getMyOrders,
   removeCartProduct,
   updatePrdQnty,
 };
