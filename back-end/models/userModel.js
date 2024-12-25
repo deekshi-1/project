@@ -43,7 +43,7 @@
           country: { type: String, required: true },
           pincode: { type: String, required: true },
         },
-      ],,
+      ],
       wishList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
       refreshToken: {
         type: String,
