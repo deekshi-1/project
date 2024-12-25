@@ -206,6 +206,25 @@ const resetPassword = asyncHandler(async (req, res) => {
   res.json(user);
 });
 
+const addAddress = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { newAddress } = req.body;
+  try {
+    const user = await User.findById(_id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    user.address.push(newAddress);
+    await user.save();
+
+    res.json("Address saved succesfully");
+  } catch (error) {
+    console.error("Error adding new address:", error.message);
+    throw error;
+  }
+});
+
 //WISHLIST AND ADDRESS
 
 const getWishList = asyncHandler(async (req, res) => {
@@ -213,23 +232,6 @@ const getWishList = asyncHandler(async (req, res) => {
   try {
     const findUser = await User.findById(_id).populate("wishList");
     res.json(findUser);
-  } catch (err) {
-    throw new Error(err);
-  }
-});
-
-const addAddress = asyncHandler(async (req, res) => {
-  const { _id } = req.user;
-  try {
-    const updateAddress = await User.findByIdAndUpdate(
-      _id,
-      {
-        $push: { adre: prodId },
-      },
-      {
-        new: true,
-      }
-    );
   } catch (err) {
     throw new Error(err);
   }

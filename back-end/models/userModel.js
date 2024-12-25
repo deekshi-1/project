@@ -1,6 +1,7 @@
   const mongoose = require("mongoose");
   const bcrypt = require("bcrypt");
   const crypto = require("crypto");
+const { type } = require("os");
   const Schema = mongoose.Schema;
 
   const UserSchema = new Schema(
@@ -37,6 +38,7 @@
       },
       address:[
         {
+          name:{ type: String, required: true },
           street: { type: String, required: true },
           city: { type: String, required: true },
           state: { type: String, required: true },

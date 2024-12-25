@@ -42,7 +42,7 @@ router.post("/cart/create-order", authMiddleware, createOrder);
 
 
 router.get("/wishlist", authMiddleware, getWishList);
-router.get("/addAddress", authMiddleware, addAddress);
+router.post("/addAddress", authMiddleware, addAddress);
 router.delete(
   "/remove-cart-item/:cartItemId",
   authMiddleware,
