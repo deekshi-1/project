@@ -170,6 +170,7 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.isError = false;
+        console.log(action.payload);
         state.user = action.payload;
         state.message = action.payload.message;
       })

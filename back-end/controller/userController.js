@@ -167,7 +167,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
   console.log(email);
   console.log(user);
-  
+
   if (!user) {
     throw new Error("User not found ");
   }

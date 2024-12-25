@@ -9,7 +9,7 @@ import {
 
 const Store = () => {
   const dispatch = useDispatch();
-  const [dispBrands, setDisPBrands] = useState([]);
+  const [dispBrands, setDispBrands] = useState([]);
   const [dispCategories, setDisCategories] = useState([]);
   const [dispTags, setDisTags] = useState([]);
   const productState = useSelector((state) => state?.product?.product);
@@ -41,7 +41,7 @@ const Store = () => {
     newBrands = [...new Set(newBrands)];
     category = [...new Set(category)];
     newtags = [...new Set(newtags)];
-    setDisPBrands(newBrands);
+    setDispBrands(newBrands);
     setDisCategories(category);
     setDisTags(newtags);
   }, [filter]);
@@ -60,7 +60,7 @@ const Store = () => {
         <h4 className="subHeading">Shop by Category</h4>
         <ul className="ps-3">
           {dispCategories &&
-            dispCategories.map((item, index) => (
+            dispCategories?.map((item, index) => (
               <li
                 key={index}
                 onClick={() => setCategory(item)}
@@ -70,7 +70,7 @@ const Store = () => {
               </li>
             ))}
         </ul>
-        <h4 className="subHeading mt-5">Filter Products</h4>
+        <h4 className="subHeading mt-4">Filter Products</h4>
         <div className="filtersection">
           <h5 className="subHeading categoryHading">Price</h5>
           <div className="d-flex align-items-center gap-3">
@@ -100,11 +100,11 @@ const Store = () => {
           <h5 className="subHeading categoryHading">Brands</h5>
           <div className="brandDiv">
             <ul className="ps-3">
-              {dispCategories &&
-                dispCategories.map((item, index) => (
+              {dispBrands &&
+                dispBrands?.map((item, index) => (
                   <li
                     key={index}
-                    onClick={() => setCategory(item)}
+                    onClick={() => setBrand (item)}
                     className="description"
                   >
                     {item}
@@ -115,11 +115,11 @@ const Store = () => {
           <h5 className="subHeading categoryHading">Tags</h5>
           <div className="brandDiv">
             <ul className="ps-3">
-              {dispCategories &&
-                dispCategories.map((item, index) => (
+              {dispTags &&
+                dispTags?.map((item, index) => (
                   <li
                     key={index}
-                    onClick={() => setCategory(item)}
+                    onClick={() => setTag(item)}
                     className="description"
                   >
                     {item}

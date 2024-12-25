@@ -24,7 +24,7 @@ const Home = () => {
         <div className="mt-5 d-flex new-arrival">
           {productState &&
             productState.map((item) => {
-              if (true) {
+              if (item.tags == "new") {
                 return <ProductCard data={item} key={item._id} />;
               }
             })}

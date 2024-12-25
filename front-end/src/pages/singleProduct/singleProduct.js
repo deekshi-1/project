@@ -71,7 +71,7 @@ const SingleProduct = () => {
       <div className="row w-100">
         <div className="col-6 d-flex justify-content-center align-items-centeralign-items-center">
           <img
-            src="/images/products/headphone/headphone1.webp"
+            src={productState?.images[0]}
             alt=""
             className="img-fluid productImg"
           />
@@ -82,22 +82,17 @@ const SingleProduct = () => {
           <ReactStars
             count={5}
             size={24}
-            value={3.5}
+            value={productState?.totalrating}
             color2={"#ffd700"}
             edit={false}
           />
           <h5 className="mb-2">Description</h5>
-          <div className="description mb-5">
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book. It has survived not
-            only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged. It was popularised in the 1960s
-            with the release of Letraset sheets containing Lorem Ipsum passages,
-            and more recently with desktop publishing software like Aldus
-            PageMaker including versions of Lorem Ipsum.
-          </div>
+          <div
+            className="description mb-5"
+            dangerouslySetInnerHTML={{
+              __html: productState?.description,
+            }}
+          ></div>
           <h5 className="mb-2">Color</h5>
           <div className="colorPick mb-5">
             {productState?.color &&
@@ -149,7 +144,7 @@ const SingleProduct = () => {
         <div className="product-review">
           <h4 className="mb-3">Product Reviews</h4>
           <div className="add-review">
-            { }
+            {}
             <h5>Add Review </h5>
             <ReactStars
               count={5}

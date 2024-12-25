@@ -16,7 +16,6 @@ const ProductSchema = new Schema(
     },
     slug: {
       type: String,
-      required: true,
       unique: true,
       lowercase: true,
     },
@@ -24,6 +23,7 @@ const ProductSchema = new Schema(
       type: String,
       required: true,
     },
+    tags: String,
     price: {
       type: Number,
       required: true,
@@ -31,7 +31,7 @@ const ProductSchema = new Schema(
     category: {
       type:String
     },
-    brand: { type: String, enum: ["Samsung", "Apple", "LG"] },
+    brand: { type: String, enum: ["samsung", "apple", "LG"] },
     color: { type: Array },
     quantity: Number,
     sold: {

@@ -15,12 +15,9 @@ const Header = () => {
   const [productOpt, setProductOpt] = useState([]);
   const [paginate, setPaginate] = useState(true);
   const navigate = useNavigate();
-
   useEffect(() => {
-    if (authState.user !== null) {
-      dispatch(listwishList());
-    }
-  }, [authState]);
+    dispatch(listwishList());
+  }, []);
 
   useEffect(() => {
     let data = [];
