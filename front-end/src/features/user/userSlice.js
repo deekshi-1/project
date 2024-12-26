@@ -126,6 +126,37 @@ export const getOrders = createAsyncThunk(
   }
 );
 
+export const listAddress = createAsyncThunk(
+  "auth/address",
+  async (thunkApi) => {
+    try {
+      return await authService.getAddress();
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+export const newAdress = createAsyncThunk(
+  "auth/addAddress",
+  async (data, thunkApi) => {
+    try {
+      return await authService.addAddress(data);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+export const rmAddressItem = createAsyncThunk(
+  "auth/addres/remove",
+  async (data, thunkApi) => {
+    try {
+      return await authService.removeAddressitem(data);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
 const getUserData = localStorage.getItem("user")
   ? JSON.parse(localStorage.getItem("user"))
   : null;
@@ -179,9 +210,7 @@ const authSlice = createSlice({
         state.isError = true;
         state.isSuccess = false;
         state.message = action.error;
-        if (state.isError === true) {
-          toast.error(state.message);
-        }
+        toast.error("Invalid credentials");
       })
       .addCase(forgotPass.pending, (state) => {
         state.isLoading = true;
@@ -358,7 +387,6 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.pass = action.payload;
         if (state.isSuccess) {
           toast.success("Password Updated Successfully");
         }
@@ -370,6 +398,62 @@ const authSlice = createSlice({
         state.message = action.error;
         if (state.isSuccess === false) {
           toast.error("Something Went Wrong!");
+        }
+      })
+      .addCase(listAddress.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(listAddress.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.address = action.payload;
+      })
+      .addCase(listAddress.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+        if (state.isSuccess === false) {
+          toast.error("Something Went Wrong!");
+        }
+      })
+      .addCase(newAdress.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(newAdress.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        toast.info("Address added");
+      })
+      .addCase(newAdress.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+        if (state.isSuccess === false) {
+          toast.error("Something Went Wrong!");
+        }
+      })
+      .addCase(rmAddressItem.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(rmAddressItem.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        console.log(action.payload);
+
+        toast.info("Item removed");
+      })
+      .addCase(rmAddressItem.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+        if (state.isError === true) {
+          toast.error(state.message);
         }
       });
   },

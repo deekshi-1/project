@@ -11,11 +11,16 @@ const emailSchema = yup.object({
   email: yup
     .string()
     .email("EMail Should be valid")
+    .matches(
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+      "Email must be a valid email address"
+    )
     .required("Email Address is Required"),
 });
 
 const Forgot = () => {
   const dispatch = useDispatch();
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -23,6 +28,7 @@ const Forgot = () => {
     validationSchema: emailSchema,
     onSubmit: (values) => {
       dispatch(forgotPass(values));
+      formik.resetForm();
     },
   });
   return (
@@ -53,10 +59,15 @@ const Forgot = () => {
               </div>
               <div>
                 <div className="mt-3 d-flex justify-content-center flex-column gap-15 align-items-center">
-                  <button className="button border-0 black p-2 mb-2" type="submit">
+                  <button
+                    className="button border-0 black p-2 mb-2"
+                    type="submit"
+                  >
                     Reset
                   </button>
-                  <Link className="black" to="/login">Cancel</Link>
+                  <Link className="black" to="/login">
+                    Cancel
+                  </Link>
                 </div>
               </div>
             </form>

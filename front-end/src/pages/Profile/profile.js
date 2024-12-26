@@ -7,6 +7,7 @@ import { FiEdit } from "react-icons/fi";
 import { updateProfile } from "../../features/user/userSlice";
 import "./profile.css";
 import { Link } from "react-router-dom";
+import Address from "../../components/address/address";
 const profileSchema = yup.object({
   firstName: yup.string().required("First Name is Required"),
   lastName: yup.string().required("Last Name is Required"),
@@ -37,16 +38,15 @@ const Profile = () => {
       setEdit(true);
     },
   });
-
+  
   const handleLogout = () => {
     localStorage.clear();
     window.location.reload();
-    
   };
 
   return (
     <div className="Page-wrapper">
-      <div className="pageHeading mb-4">Profile</div>
+      <h4 className="pageHeading mb-4">Profile</h4>
       <div className="bg-white p-4">
         <div className="row mb-5">
           <div className="col-12">
@@ -140,6 +140,7 @@ const Profile = () => {
             </form>
           </div>
         </div>
+        <Address />
         <div className="my-4 myOrder">
           <Link to="/my-Order">My Orders</Link>
         </div>

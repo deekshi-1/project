@@ -18,13 +18,15 @@ const {
   getMyOrders,
   updatePrdQnty,
   updateUser,
+  getAddress,
+  deleteAddress,
 } = require("../controller/userController");
 
-
-
-
 const authMiddleware = require("../middleware/auth");
-const { checkout, paymentVerification } = require("../controller/paymentController");
+const {
+  checkout,
+  paymentVerification,
+} = require("../controller/paymentController");
 
 router.post("/register", createUser);
 router.post("/login", loginUser);
@@ -40,9 +42,10 @@ router.post("/cart", authMiddleware, userCart);
 router.get("/cart", authMiddleware, getUserCart);
 router.post("/cart/create-order", authMiddleware, createOrder);
 
-
 router.get("/wishlist", authMiddleware, getWishList);
 router.post("/addAddress", authMiddleware, addAddress);
+router.get("/getAddress", authMiddleware, getAddress);
+router.delete("/deleteAddress/:itemId", authMiddleware, deleteAddress);
 router.delete(
   "/remove-cart-item/:cartItemId",
   authMiddleware,
@@ -54,10 +57,8 @@ router.delete(
   updatePrdQnty
 );
 
-
-router.post('/order/checkout', authMiddleware, checkout)
-router.post("/order/paymentVerification",authMiddleware,paymentVerification)
+router.post("/order/checkout", authMiddleware, checkout);
+router.post("/order/paymentVerification", authMiddleware, paymentVerification);
 router.get("/myorders", authMiddleware, getMyOrders);
-
 
 module.exports = router;

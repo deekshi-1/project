@@ -16,22 +16,18 @@ const login = async (data) => {
 };
 
 const forgotPassword = async (data) => {
-  console.log(data);
-
   const response = await axios.post(`${base_url}user/forgot-password`, data);
   if (response.data) {
-    console.log(response);
     return response.data;
   }
 };
 
 const resetPassword = async (data) => {
-  console.log(data);
-  const response = await axios.post(`${base_url}user/reset-password/${data.token}`,
+  const response = await axios.post(
+    `${base_url}user/reset-password/${data.token}`,
     { password: data?.password }
   );
   if (response.data) {
-    console.log(response);
     return response.data;
   }
 };
@@ -68,7 +64,6 @@ const updateUser = async (data) => {
     getAuthHeaders()
   );
   if (response.data) {
-    console.log(response);
     return response.data;
   }
 };
@@ -78,7 +73,6 @@ const removeCartitem = async (cartItemId) => {
     getAuthHeaders()
   );
   if (response.data) {
-    console.log(response.data);
     return response.data;
   }
 };
@@ -112,6 +106,48 @@ const getUserOrders = async () => {
   }
 };
 
+const getAddress = async () => {
+  const response = await axios.get(
+    `${base_url}user/getAddress`,
+    getAuthHeaders()
+  );
+  if (response.data) {
+    return response.data;
+  }
+};
+const addAddress = async (data) => {
+  const response = await axios.post(
+    `${base_url}user/addAddress`,
+    data,
+    getAuthHeaders()
+  );
+  if (response.data) {
+    return response.data;
+  }
+};
+
+const deleteAddress = async () => {
+  const response = await axios.delete(
+    `${base_url}user/getAddress`,
+    getAuthHeaders()
+  );
+  if (response.data) {
+    return response.data;
+  }
+};
+
+const removeAddressitem = async (itemId) => {
+  console.log(itemId);
+
+  const response = await axios.delete(
+    `${base_url}user/deleteAddress/${itemId}`,
+    getAuthHeaders()
+  );
+  if (response.data) {
+    return response.data;
+  }
+};
+
 export const authService = {
   registerUser,
   login,
@@ -125,4 +161,8 @@ export const authService = {
   updateUser,
   forgotPassword,
   resetPassword,
+  getAddress,
+  addAddress,
+  deleteAddress,
+  removeAddressitem,
 };

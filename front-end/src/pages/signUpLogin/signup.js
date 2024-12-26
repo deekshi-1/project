@@ -12,9 +12,24 @@ import { toast } from "react-toastify";
 const signUpSchema = yup.object({
   firstName: yup.string().required("First Name is required"),
   lastName: yup.string().required("Last Name is required"),
-  email: yup.string().email("Invalid Email").required("Email is required"),
-  mobile: yup.string().required("Mobile Number is required"),
-  password: yup.string().required("Password is required"),
+  email: yup
+    .string()
+    .email("Invalid Email")
+    .matches(
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+      "Email must be a valid email address"
+    )
+      .required("Email is required"),
+  mobile: yup
+    .string()
+    .matches(/^\d+$/, "Mobile number must contain only digits")
+    .min(10, "Mobile number must be at least 10 digits")
+    .max(15, "Mobile number cannot exceed 15 digits")
+    .required("Mobile Number is required"),
+  password: yup
+    .string()
+    .min(8, "Password must be at least 8 characters long")
+    .required("Password is required"),
 });
 const Signup = () => {
   const dipatch = useDispatch();

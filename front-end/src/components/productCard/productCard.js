@@ -34,18 +34,14 @@ const ProductCard = (props) => {
     >
       <div className=" addtoWishList">
         <button onClick={() => addtoWishList(data?._id)}>
-          {inList  ? <GoHeartFill className="fillHeart"/> : <GoHeart />}
+          {inList ? <GoHeartFill className="fillHeart" /> : <GoHeart />}
         </button>
       </div>
       <div className="imageBanner mb-5">
-        <img
-          src="/images/products/headphone/headphone1.webp"
-          alt="product-img"
-          className="img-fluid"
-        />
+        <img src={data?.images[0]} alt="product-img" className="img-fluid" />
       </div>
       <div className="product-title">{data.title}</div>
-      <div className="brand"> MOVSSOU</div>
+      <div className="brand"> {data.brand}</div>
       <div className="price mb-3">{data.price}</div>
       <Link to={`/product/${data._id}`}>
         <button className="btn btn-primary">View Product</button>

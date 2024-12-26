@@ -17,7 +17,7 @@ const loginSchema = yup.object({
 const Login = () => {
   const dipatch = useDispatch();
   const navigate = useNavigate();
-  const { isSuccess, message } = useSelector((state) => state.auth);
+  const { isSuccess, message, user } = useSelector((state) => state.auth);
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -34,8 +34,10 @@ const Login = () => {
       if (message) {
         toast.error(message);
       } else {
-        toast.info("login sucessfull");
-        navigate("/");
+        if (user != null) {
+          toast.info("login sucessfull");
+          navigate("/");
+        }
       }
     }
   }, [isSuccess, message, navigate]);

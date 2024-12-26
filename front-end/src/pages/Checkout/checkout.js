@@ -21,8 +21,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
 import { getAuthHeaders, base_url } from "../../utils/axiosConfig";
-import { order, viewCart } from "../../features/user/userSlice";
-
+import { listAddress, order, viewCart } from "../../features/user/userSlice";
 const shippingSchema = yup.object({
   firstName: yup.string().required("First Name is Required"),
   lastName: yup.string().required("Last Name is Required"),
@@ -31,22 +30,26 @@ const shippingSchema = yup.object({
   city: yup.string().required("City is Required"),
   country: yup.string().required("Country is Required"),
   pincode: yup.number().required("Pincode is Required"),
-  other:yup.string()
+  other: yup.string(),
 });
 
 const CheckOut = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(viewCart());
+    dispatch(listAddress());
   }, []);
-  const cartState = useSelector((state) => state.auth.cartProduct);
   const [totalAmount, setTotalAmount] = useState(null);
   const [shippingInfo, setShippingInfo] = useState(null);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+
   const [paymentInfo, setPaymentInfo] = useState({
     razorpayPaymentId: "",
     razorpayOrderId: "",
   });
   const [cartProductState, setCartProductState] = useState(null);
+  const userAddressState = useSelector((state) => state?.auth?.address);
+  const cartState = useSelector((state) => state.auth.cartProduct);
   useEffect(() => {
     let sum = 0;
     for (let index = 0; index < cartState?.length; index++) {
@@ -58,18 +61,16 @@ const CheckOut = () => {
     initialValues: {
       firstName: "",
       lastName: "",
-      address: "",
-      state: "",
-      city: "",
-      country: "",
-      pincode: "",
+      address: selectedAddress?.addressLine1 || "",
+      city: selectedAddress?.city || "",
+      state: selectedAddress?.state || "",
+      country: selectedAddress?.country || "",
+      pincode: selectedAddress?.pincode || "",
       other: "",
     },
     validationSchema: shippingSchema,
     onSubmit: (values) => {
       setShippingInfo(values);
-      console.log(shippingInfo);
-      
       setTimeout(() => {
         checkOutHandler();
       }, 300);
@@ -150,8 +151,8 @@ const CheckOut = () => {
         });
 
         setTimeout(() => {
-          console.log( response.razorpay_payment_id,response.razorpay_order_id);
-          
+          console.log(response.razorpay_payment_id, response.razorpay_order_id);
+
           dispatch(
             order({
               totalPrice: totalAmount,
@@ -181,6 +182,24 @@ const CheckOut = () => {
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
   };
+  const handleAddressChange = (e) => {
+    let value = userAddressState.find(
+      (address) => address._id === e.target.value
+    );
+    setSelectedAddress(value || null);
+    if (value) {
+      formik.setValues({
+        firstName: formik.values.firstName,
+        lastName: formik.values.lastName,
+        address: value.addressLine1 || "",
+        city: value.city || "",
+        state: value.state || "",
+        country: value.country || "",
+        pincode: value.pincode || "",
+        other: formik.values.other,
+      });
+    }
+  };
 
   return (
     <div className="mx-auto mt-5" style={{ maxWidth: "900px" }}>
@@ -193,6 +212,31 @@ const CheckOut = () => {
               </MDBTypography>
             </MDBCardHeader>
             <MDBCardBody>
+              <div className="mb-4 pb-2">
+                <MDBTypography tag="h6" className="mb-3">
+                  Saved Address
+                </MDBTypography>
+                <select
+                  className="select p-2 rounded bg-grey"
+                  style={{ width: "100%" }}
+                  onChange={handleAddressChange}
+                  value={selectedAddress?._id || ""}
+                >
+                  <option value="" disabled>
+                    Select an Address
+                  </option>
+                  {userAddressState && userAddressState?.length > 0 ? (
+                    userAddressState?.map((address) => (
+                      <option key={address._id} value={address._id}>
+                        {address.name}
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>No saved addresses available</option>
+                  )}
+                </select>
+              </div>
+
               <form onSubmit={formik.handleSubmit}>
                 <MDBRow className="mb-4">
                   <MDBCol>
@@ -227,7 +271,9 @@ const CheckOut = () => {
                   type="text"
                   className="mt-3"
                   name="address"
-                  value={formik.values.address}
+                  value={
+                    formik.values.address || selectedAddress?.addressLine1 || ""
+                  }
                   onChange={formik.handleChange("address")}
                   onBlur={formik.handleBlur("address")}
                 />
@@ -240,7 +286,7 @@ const CheckOut = () => {
                       label="City"
                       type="text"
                       name="city"
-                      value={formik.values.city}
+                      value={formik.values.city || selectedAddress?.city || ""}
                       onChange={formik.handleChange("city")}
                       onBlur={formik.handleBlur("city")}
                     />
@@ -252,7 +298,9 @@ const CheckOut = () => {
                     <MDBInput
                       label="State"
                       name="state"
-                      value={formik.values.state}
+                      value={
+                        formik.values.state || selectedAddress?.state || ""
+                      }
                       onChange={formik.handleChange("state")}
                       onBlur={formik.handleBlur("state")}
                     />
@@ -266,7 +314,9 @@ const CheckOut = () => {
                     <MDBInput
                       label="Country"
                       name="country"
-                      value={formik.values.country}
+                      value={
+                        formik.values.country || selectedAddress?.country || ""
+                      }
                       onChange={formik.handleChange("country")}
                       onBlur={formik.handleBlur("country")}
                     />
@@ -278,7 +328,9 @@ const CheckOut = () => {
                     <MDBInput
                       label="Pincode"
                       name="pincode"
-                      value={formik.values.pincode}
+                      value={
+                        formik.values.pincode || selectedAddress?.pincode || ""
+                      }
                       onChange={formik.handleChange("pincode")}
                       onBlur={formik.handleBlur("pincode")}
                     />

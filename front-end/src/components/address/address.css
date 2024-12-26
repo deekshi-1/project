@@ -1,0 +1,7 @@
+.address-wrapper{
+    cursor: pointer;
+}
+
+.address-wrapper:hover{
+    background-color: rgba(4, 4, 4, 0.078);
+}

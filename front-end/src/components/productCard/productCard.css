@@ -41,11 +41,17 @@
   right: 10px;
 }
 
-.addtoWishList>button{
+.addtoWishList > button {
   background-color: transparent;
   border: none;
 }
 
-.fillHeart{
+.fillHeart {
   color: red;
+}
+
+.product-title,
+.brand,
+.description {
+  text-transform: capitalize;
 }

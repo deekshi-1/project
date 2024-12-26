@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { listwishList } from "../../features/user/userSlice";
 import { wishlist } from "../../features/product/productSlice";
 import { Link } from "react-router-dom";
+import EmptyList from "../../components/emptyList";
 
 const Wishlist = () => {
   const dispatch = useDispatch();
@@ -26,7 +27,7 @@ const Wishlist = () => {
       <h4>Wishlist</h4>
       <div className="d-flex gap-5 flex-wrap">
         {wishListState && wishListState?.length === 0 && (
-          <div> <img src="/images/emptyCart.png"/></div>
+          <EmptyList page="wishlist" />
         )}
         {wishListState &&
           wishListState?.map((item) => (
@@ -36,7 +37,7 @@ const Wishlist = () => {
               </div>
               <div className="imageBanner mb-5">
                 <img
-                  src="/images/products/headphone/headphone1.webp"
+                  src={item?.images[0]}
                   alt="product-img"
                   className="img-fluid"
                 />
@@ -44,9 +45,9 @@ const Wishlist = () => {
               <div className="product-title">
                 <Link to={`/product/${item._id}`}>{item.title}</Link>
               </div>
-              <div className="brand"> MOVSSOU</div>
+              <div className="brand"> {item.brand}</div>
               <div className="price mb-3">{item.price}</div>
-               <div className="price mb-3">{item.short_description}</div>
+              <div className="price mb-3">{item.short_description}</div>
             </div>
           ))}
       </div>

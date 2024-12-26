@@ -1,7 +1,13 @@
-.wishListWrapper{
-    padding: 2rem;
+.wishListWrapper {
+  padding: 2rem;
 }
 
-.product-title  a{
-    color: black;
+.product-title a {
+  color: black;
+}
+
+.product-title,
+.brand,.price
+.description {
+  text-transform: capitalize;
 }

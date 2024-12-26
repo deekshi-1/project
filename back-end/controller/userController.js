@@ -10,6 +10,7 @@ const jwt = require("jsonwebtoken");
 const { response } = require("express");
 const sendMail = require("./emailController");
 const crypto = require("crypto");
+const URL = process.env.BASE_URL || "http://localhost:3000";
 
 // NEW USER
 const createUser = asyncHandler(async (req, res) => {
@@ -31,11 +32,11 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const checkUser = await User.findOne({ email: email });
   if (!checkUser) {
-    throw new Error("Email Id doesn't exist");
+    res.status(401).json({ message: "Invalid email" });
   } else {
     const check = await checkUser.passwordCheck(password);
     if (!check) {
-      throw new Error("Invalid password");
+      res.status(401).json({ message: "Invalid email or password" });
     } else {
       const refreshToken = await generateRefreshToken(checkUser._id);
       await User.findByIdAndUpdate(
@@ -57,6 +58,7 @@ const loginUser = asyncHandler(async (req, res) => {
         lastName: checkUser?.lastName,
         email: checkUser?.email,
         mobile: checkUser?.mobile,
+        address: checkUser?.address,
         token: refreshToken,
       });
     }
@@ -136,7 +138,6 @@ const handleRefresh = asyncHandler(async (req, res) => {
   const cookie = req.cookies;
   if (!cookie?.refreshToken) throw new Error("No Refreesh Token ");
   const refreshToken = cookie.refreshToken;
-  console.log(refreshToken);
   const user = await User.findOne({ refreshToken });
   if (!user) throw new Error("Cant find the user Token");
   jwt.verify(token, process.env.JWT_SECRET, (err, decode) => {
@@ -165,16 +166,13 @@ const updatePassword = asyncHandler(async (req, res) => {
 const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
   const user = await User.findOne({ email });
-  console.log(email);
-  console.log(user);
-
   if (!user) {
     throw new Error("User not found ");
   }
   try {
     const token = await user.passwordResetToken();
     await user.save();
-    const resetURL = `Please follow link to reset the Password <a href="http://localhost:3000/reset-password/${token}">Click here</a>`;
+    const resetURL = `Please follow link to reset the Password <a href="${URL}/reset-password/${token}">Click here</a>`;
     const data = {
       to: email,
       text: "Hello user ",
@@ -225,7 +223,79 @@ const addAddress = asyncHandler(async (req, res) => {
   }
 });
 
-//WISHLIST AND ADDRESS
+const getAddress = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  try {
+    const user = await User.findById(_id).select("address");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user.address);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+});
+
+const editAddress = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { addressId, updatedAddress } = req.body;
+
+  try {
+    const user = await User.findById(_id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const addressIndex = user.address.findIndex(
+      (addr) => addr._id.toString() === addressId
+    );
+    if (addressIndex === -1) {
+      return res.status(404).json({ message: "Address not found" });
+    }
+
+    user.address[addressIndex] = {
+      ...user.address[addressIndex],
+      ...updatedAddress,
+    };
+    await user.save();
+
+    res.status(200).json({
+      message: "Address updated successfully",
+      address: user.address[addressIndex],
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+});
+const deleteAddress = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { itemId } = req.params;
+  try {
+    const user = await User.findById(_id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const addressIndex = user.address.findIndex(
+      (addr) => addr._id.toString() === itemId
+    );
+    if (addressIndex === -1) {
+      return res.status(404).json({ message: "Address not found" });
+    }
+
+    user.address.splice(addressIndex, 1); // Remove the address
+    await user.save();
+
+    res.status(200).json({
+      message: "Address deleted successfully",
+      remainingAddresses: user.address,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+});
+
+//WISHLIST
 
 const getWishList = asyncHandler(async (req, res) => {
   const { _id } = req.user;
@@ -264,16 +334,6 @@ const getUserCart = asyncHandler(async (req, res) => {
     throw new Error(error);
   }
 });
-// const emptyCart = asyncHandler(async (req, res) => {
-//   const { _id } = req.user;
-//   try {
-//     const cart = await Cart.findOneAndRemove({ userId: _id });
-//     res.json(cart);
-//   } catch (err) {
-//     throw new Error(err);
-//   }
-// });
-
 const removeCartProduct = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   const { cartItemId } = req.params;
@@ -348,6 +408,8 @@ module.exports = {
   resetPassword,
   getWishList,
   addAddress,
+  getAddress,
+  deleteAddress,
   userCart,
   getUserCart,
   // emptyCart,

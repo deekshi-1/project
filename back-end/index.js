@@ -1,7 +1,8 @@
 require("dotenv").config();
 const express = require("express");
-const cors = require('cors');
+const cors = require("cors");
 const PORT = process.env.PORT || 5000;
+const URL = process.env.BASE_URL || "http://localhost:3000";
 const dbConnection = require("./config/dbConnect");
 const authRoute = require("./routes/authRoute");
 const categoryRoute = require("./routes/categoryRoute");
@@ -16,10 +17,10 @@ const app = express();
 app.use(cors());
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: `${URL}`,
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 dbConnection();

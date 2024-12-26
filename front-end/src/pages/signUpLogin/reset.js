@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./sighnupUp.css";
 import InputField from "../../components/InputField";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -7,7 +7,10 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import { resetPass } from "../../features/user/userSlice";
 const passwordSchema = yup.object({
-  password: yup.string().required("Password is Required"),
+  password: yup
+    .string()
+    .min(8, "Password must be at least 8 characters long")
+    .required("Password is required"),
 });
 
 const Reset = () => {
@@ -15,6 +18,15 @@ const Reset = () => {
   const getToken = location.pathname.split("/")[2];
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { isSuccess, isError, message } = useSelector((state) => state?.auth);
+  useEffect(() => {
+    if (isSuccess) {
+      navigate("/login");
+    }
+    if (isError) {
+      console.error(message);
+    }
+  }, [isSuccess, isError, message, navigate]);
   const formik = useFormik({
     initialValues: {
       password: "",
@@ -22,10 +34,10 @@ const Reset = () => {
     validationSchema: passwordSchema,
     onSubmit: (values) => {
       console.log(getToken, values.password);
-
       dispatch(resetPass({ token: getToken, password: values.password }));
     },
   });
+
   return (
     <div className="py-5 ">
       <div className="row justify-content-center align-items-center login-wrappper">

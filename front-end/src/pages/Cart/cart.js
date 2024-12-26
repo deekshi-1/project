@@ -8,6 +8,7 @@ import {
   rmCartItem,
   updCartItem,
 } from "../../features/user/userSlice";
+import EmptyList from "../../components/emptyList";
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -57,7 +58,7 @@ const Cart = () => {
             <div className="cart-item" key={item._id}>
               <div className="cart-item-img">
                 <img
-                  src="/images/products/headphone/headphone1.webp"
+                  src={item?.productId?.images[0]}
                   alt=""
                   className="img-fluid"
                 />
@@ -108,10 +109,7 @@ const Cart = () => {
         </>
       ) : (
         <div className="empty-cart">
-          <p>Your cart is empty.</p>
-          <Link to="/store">
-            <button className="btn btn-primary">Start Shopping</button>
-          </Link>
+          <EmptyList page="Cart" />
         </div>
       )}
     </div>
