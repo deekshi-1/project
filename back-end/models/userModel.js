@@ -38,7 +38,7 @@ const { type } = require("os");
       },
       address:[
         {
-          name:{ type: String, required: true },
+          name:{ type: String, required: true ,unique:true},
           street: { type: String, required: true },
           city: { type: String, required: true },
           state: { type: String, required: true },
