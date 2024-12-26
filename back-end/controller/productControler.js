@@ -1,6 +1,6 @@
 const { json } = require("body-parser");
 const Product = require("../models/prodectModel");
-const User =require("../models/userModel")
+const User = require("../models/userModel");
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
 const { query } = require("express");
@@ -12,7 +12,10 @@ const allProduct = asyncHandler(async (req, res) => {
     const exclud = ["page", "sort", "limit", "fields"];
     exclud.forEach((el) => delete qryitem[el]);
     let qryString = JSON.stringify(qryitem);
-    qryString = qryString.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    qryString = qryString.replace(
+      /\b(gte|gt|lte|lt)\b/g,
+      (match) => `$${match}`
+    );
     let result = Product.find(JSON.parse(qryString)); // Do NOT await yet
 
     // SORTING
@@ -33,7 +36,7 @@ const allProduct = asyncHandler(async (req, res) => {
 
     // PAGINATION
     const pageNo = req.query.page || 1;
-    const limit = req.query.limit || 10;
+    const limit = req.query.limit || 50;
     const skip = (pageNo - 1) * limit;
     result = result.skip(skip).limit(limit);
 
@@ -52,7 +55,6 @@ const allProduct = asyncHandler(async (req, res) => {
   }
 });
 
-
 const findProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
   try {
@@ -66,9 +68,8 @@ const findProduct = asyncHandler(async (req, res) => {
 // Add to wishList
 
 const addToWishList = asyncHandler(async (req, res) => {
-  
   const { _id } = req.user;
-  const { productId } = req.body;  
+  const { productId } = req.body;
   try {
     const user = await User.findById(_id);
     const wishlisted = user.wishList.find((i) => i.toString() === productId);
@@ -141,9 +142,9 @@ const addreview = asyncHandler(async (req, res) => {
       let totalrating = allRating.ratings.length;
       let ratingSum = allRating.ratings
         .map((item) => item.star)
-        .reduce((prev, curr) => prev+ curr, 0);
+        .reduce((prev, curr) => prev + curr, 0);
       let actualRating = Math.round(ratingSum / totalrating);
-      let fProduct =await Product.findByIdAndUpdate(
+      let fProduct = await Product.findByIdAndUpdate(
         productId,
         {
           totalrating: actualRating,

@@ -8,10 +8,10 @@ import EmptyList from "../../components/emptyList";
 
 const Wishlist = () => {
   const dispatch = useDispatch();
-  const wishListState = useSelector((state) => state?.auth?.wishlist?.wishList);
   useEffect(() => {
     dispatch(listwishList());
-  }, [wishListState]);
+  }, []);
+  const wishListState = useSelector((state) => state?.auth?.wishlist?.wishList);
 
   const removeFromWishList = (id) => {
     dispatch(wishlist(id));

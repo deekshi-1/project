@@ -61,7 +61,7 @@ const Header = () => {
           <div className="fit-width Right header-profile">
             <Link to={authState?.user === null ? "/login" : "/profile"}>
               <FaRegUser color="white" />
-              {authState?.user === null ? "Logn" : authState?.user?.firstName}
+              {authState?.user === null ? "Login" : authState?.user?.firstName}
             </Link>
           </div>
           <div className="fit-width Right header-wishList">

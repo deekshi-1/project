@@ -31,7 +31,7 @@ const ProductSchema = new Schema(
     category: {
       type:String
     },
-    brand: { type: String, enum: ["samsung", "apple", "LG"] },
+    brand: { type: String},
     color: { type: Array },
     quantity: Number,
     sold: {

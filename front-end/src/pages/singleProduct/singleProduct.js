@@ -32,10 +32,10 @@ const SingleProduct = () => {
       if (!alreadExist) {
         dispatch(
           addCart({
-            productId: productState._id,
+            productId: productState?._id,
             color,
             quantity,
-            price: productState.price,
+            price: productState?.price,
           })
         );
         setAlreadyExist(true);
@@ -50,21 +50,21 @@ const SingleProduct = () => {
 
   useEffect(() => {
     let nArray = productState?.rating?.filter(
-      (rating) => rating.postedBy.toString() !== userState._id
+      (rating) => rating.postedBy.toString() !== userState?._id
     );
     console.log(nArray);
   }, [productState]);
 
   useEffect(() => {
     const nArray = productState?.rating?.filter(
-      (rating) => rating.postedBy.toString() !== userState._id
+      (rating) => rating.postedBy.toString() !== userState?._id
     );
     const uArray = productState?.rating?.filter(
-      (rating) => rating.postedBy.toString() !== userState._id
+      (rating) => rating.postedBy.toString() !== userState?._id
     );
     setFiltered(nArray);
     setuserReview(uArray);
-  }, [productState, userState._id]);
+  }, [productState, userState?._id]);
 
   return (
     <div className="main-product-wrapper py-5">
