@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3001;
 const URL = process.env.BASE_URL || "http://localhost:3000";
 const dbConnection = require("./config/dbConnect");
 const authRoute = require("./routes/authRoute");
@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookie());
 
 app.use("/api/user", authRoute);
-app.use("/api/product", productRoute);
+app.use("   ", productRoute);
 app.use("/api/category", categoryRoute);
 app.use("/api/brand", brandRoute);
 
