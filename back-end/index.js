@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookie());
 
 app.use("/api/user", authRoute);
-app.use("   ", productRoute);
+app.use("/api/product", productRoute);
 app.use("/api/category", categoryRoute);
 app.use("/api/brand", brandRoute);
 
